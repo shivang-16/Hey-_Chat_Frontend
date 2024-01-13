@@ -1,22 +1,20 @@
 import React, { useState } from "react";
 import Chat from "../Chat/Chat";
 import Sidebar from "../Sidebar/Sidebar";
-import './home.scss'
+import "./home.scss";
 
 const Home = () => {
-  const [user, setUser] = useState([])
+  const [user, setUser] = useState("");
 
   return (
-    <div style={{display: "flex"}}> 
-    <div>
-
-      <Sidebar user={user} setUser={setUser}/>
+    <div style={{ display: "flex" }}>
+      <div>
+        <Sidebar user={user} setUser={setUser} />
+      </div>
+      <div>
+        <Chat user={user} />
+      </div>
     </div>
-    <div>
-
-      <Chat user={user}/>
-    </div>
-    </div>    
   );
 };
 

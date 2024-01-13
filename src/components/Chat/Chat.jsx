@@ -1,32 +1,87 @@
-import { AppBar, TextField } from '@mui/material'
-import React, {useMemo, useState, useEffect} from 'react'
-import { io } from "socket.io-client"
-import SendIcon from '@mui/icons-material/Send';
-const Chat = ({user}) => {
-    const socket = useMemo(() => io('http://localhost:4502'), [])
+import {
+  AppBar,
+  Button,
+  Chip,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
+import React, { useMemo, useState, useEffect } from "react";
+import { io } from "socket.io-client";
+import SendIcon from "@mui/icons-material/Send";
+import { Hey_Server } from "../../main";
+const Chat = ({ user }) => {
+  const socket = useMemo(() => io(Hey_Server), []);
+  const [text, setText] = useState("");
+  const [received, setReceived] = useState([]);
 
-    useEffect(() => {
-      socket.on("connect", () => {
-        console.log(socket.id)
-    })
-    
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // console.log(text)
+    const newMessage = { message: text, user: user };
+    const updatedMessages = [...received, newMessage];
+    socket.emit("message", updatedMessages);
+    socket.emit("text", updatedMessages);
+    setReceived(updatedMessages);
+    setText("");
+  };
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
+
     socket.on("welcome", (data) => {
-      console.log(data)
-    })
-    
-    }, [])
+      console.log(data);
+    });
+
+    socket.on("received_text", (text) => {
+      console.log(text);
+      setReceived(text);
+    });
+  }, []);
 
   return (
-    <div className='chat' style={{width:"70vw"}}>
-        <AppBar sx={{position: "relative", padding:'1.2rem'}} variant='outlined'>{user}</AppBar>
-    
-    <div className='chatArea' style={{height:"87vh"}}></div>
-    <div style={{display:'flex'}}>
-    <TextField variant='filled' fullWidth placeholder='Enter Message'/>
-    <SendIcon sx={{position:"absolute", right:'10px', margin:'1rem', cursor:'pointer'}}/>
-    </div>
-    </div>
-  )
-}
+    <div className="chat" style={{ width: "83vw" }}>
+      <AppBar
+        sx={{ position: "relative", padding: "1.2rem" }}
+        variant="outlined"
+      >
+        {user}
+      </AppBar>
 
-export default Chat
+      <div className="chatArea" style={{ height: "83vh" }}>
+        {received &&
+          received.map((message) => (
+            <Stack>
+              <Typography variant="h6" color={"darkgreen"}>
+                {message.user}
+              </Typography>
+              <Typography>{message.message}</Typography>
+            </Stack>
+          ))}
+      </div>
+      <form style={{ display: "flex" }} onSubmit={handleSubmit}>
+        <TextField
+          variant="filled"
+          fullWidth
+          placeholder="Enter Message"
+          onChange={(e) => setText(e.target.value)}
+        />
+        <Button
+          type="submit"
+          sx={{
+            position: "absolute",
+            right: "10px",
+            margin: "1rem",
+            cursor: "pointer",
+          }}
+        >
+          <SendIcon />
+        </Button>
+      </form>
+    </div>
+  );
+};
+
+export default Chat;
