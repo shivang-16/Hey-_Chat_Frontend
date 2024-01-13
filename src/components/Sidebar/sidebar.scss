@@ -1,0 +1,15 @@
+@import '../../feature.scss';
+
+.sidebar{
+    display: flex;
+    flex-direction: column;
+    // border: 2px solid green;
+    // width: 400px;
+    height: 100vh;
+    background-color: rgb(66, 65, 65);
+    color: white;
+}
+
+// .appbar{
+//     border: 2px solid blue;
+// }

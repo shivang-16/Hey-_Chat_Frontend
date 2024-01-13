@@ -6,7 +6,7 @@ import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 const defaultTheme = createTheme({
   palette: {
     primary: {
-      main: "rgb(51, 133, 255)",
+      main: "rgb(23, 25, 26)",
     },
   },
 });

@@ -1,7 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
+import Chat from "../Chat/Chat";
+import Sidebar from "../Sidebar/Sidebar";
+import './home.scss'
 
 const Home = () => {
-  return <div>Home</div>;
+  const [user, setUser] = useState([])
+
+  return (
+    <div style={{display: "flex"}}> 
+    <div>
+
+      <Sidebar user={user} setUser={setUser}/>
+    </div>
+    <div>
+
+      <Chat user={user}/>
+    </div>
+    </div>    
+  );
 };
 
 export default Home;
