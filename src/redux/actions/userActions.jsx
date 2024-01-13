@@ -1,12 +1,20 @@
 import toast from "react-hot-toast";
 import axios from "axios";
-import { server } from "../../../../Server/app";
+import { Hey_Server } from "../../main";
+import {
+  LoadUserFail,
+  LoadUserRequests,
+  LoadUserSuccess,
+  LoginFail,
+  LoginRequests,
+  LoginSuccess,
+} from "../slice/userSlice";
 
 export const resgister = (name, email, password) => async (dispatch) => {
   try {
     dispatch({ type: "OtpRequests" });
     const { data } = await axios.post(
-      `${server}/api/user/register`,
+      `${Hey_Server}/api/user/register`,
       {
         name,
         email,
@@ -34,7 +42,7 @@ export const verifyOtp = (otp) => async (dispatch) => {
   try {
     dispatch({ type: "RegisterRequests" });
     const { data } = await axios.post(
-      `${server}/api/user/verify`,
+      `${Hey_Server}/api/user/verify`,
       {
         otp,
       },
@@ -60,7 +68,7 @@ export const resendOtp = (email) => async (dispatch) => {
   try {
     dispatch({ type: "OtpRequests" });
     const { data } = await axios.post(
-      `${server}/api/user/register`,
+      `${Hey_Server}/api/user/register`,
       {
         email,
       },
@@ -82,52 +90,55 @@ export const resendOtp = (email) => async (dispatch) => {
   }
 };
 
-export const login = (email, password) => async (dispatch) => {
-  try {
-    dispatch({ type: "LoginRequests" });
-    const { data } = await axios.post(
-      `${server}/api/user/login`,
-      {
-        email,
-        password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+export const login =
+  ({ email, password }) =>
+  async (dispatch) => {
+    try {
+      dispatch(LoginRequests());
+      console.log(email, password);
+      const { data } = await axios.post(
+        `${Hey_Server}/api/user/login`,
+        {
+          email,
+          password,
         },
-        withCredentials: true,
-      },
-    );
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        },
+      );
 
-    console.log(data);
-    dispatch({ type: "LoginSuccess", payload: data.user });
-    toast.success(data.message);
-  } catch (error) {
-    console.log(error);
-    toast.error(error.response.data.message);
-    dispatch({ type: "LoginFail", payload: error.response.data.message });
-  }
-};
+      console.log(data);
+      dispatch(LoginSuccess(data.user));
+      toast.success(data.message);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+      dispatch(LoginFail(error.response.data.message));
+    }
+  };
 
 export const loadUser = () => async (dispatch) => {
   try {
-    dispatch({ type: "LoadUserRequests" });
-    const { data } = await axios.get(`${server}/api/user/login`, {
+    dispatch(LoadUserRequests());
+    const { data } = await axios.get(`${Hey_Server}/api/user/profile`, {
       withCredentials: true,
     });
 
     console.log(data);
-    dispatch({ type: "LoadUserSuccess", payload: data.user });
+    dispatch(LoadUserSuccess(data.user));
   } catch (error) {
     console.log(error);
-    dispatch({ type: "LoadUserFail", payload: error.response.data.message });
+    dispatch(LoadUserFail(error.response.data.message));
   }
 };
 
 export const logout = () => async (dispatch) => {
   try {
     dispatch({ type: "LogoutRequests" });
-    const { data } = await axios.get(`${server}/api/user/logout`, {
+    const { data } = await axios.get(`${Hey_Server}/api/user/logout`, {
       withCredentials: true,
     });
 

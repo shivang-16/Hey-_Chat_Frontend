@@ -12,7 +12,7 @@ const Home = () => {
         <Sidebar user={user} setUser={setUser} />
       </div>
       <div>
-        <Chat user={user} />
+        <Chat name={user} />
       </div>
     </div>
   );

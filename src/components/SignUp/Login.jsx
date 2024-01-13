@@ -12,6 +12,9 @@ import {
   Typography,
   Container,
 } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { login } from "../../redux/actions/userActions";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
   return (
@@ -32,13 +35,22 @@ function Copyright(props) {
 }
 
 export default function Login() {
-  const handleSubmit = (event) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+
     console.log({
       email: data.get("email"),
       password: data.get("password"),
     });
+    dispatch(
+      login({
+        email: data.get("email"),
+        password: data.get("password"),
+      }),
+    );
   };
 
   return (

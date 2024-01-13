@@ -6,7 +6,7 @@ import { Stack, Typography } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 
 const Sidebar = ({ user, setUser }) => {
-  user = ["Shivang", "Lucky", "Tanya", "Mummy"];
+  user = ["Lucky", "Tanya", "Mummy"];
   const handleClick = (name) => {
     console.log(name);
     setUser(name);

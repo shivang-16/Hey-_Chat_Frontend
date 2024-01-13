@@ -10,15 +10,17 @@ import React, { useMemo, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import SendIcon from "@mui/icons-material/Send";
 import { Hey_Server } from "../../main";
-const Chat = ({ user }) => {
+import { useSelector } from "react-redux";
+
+const Chat = ({ name }) => {
   const socket = useMemo(() => io(Hey_Server), []);
   const [text, setText] = useState("");
   const [received, setReceived] = useState([]);
-
+  const { isAuthenticated, user } = useSelector((state) => state.user);
   const handleSubmit = (e) => {
     e.preventDefault();
     // console.log(text)
-    const newMessage = { message: text, user: user };
+    const newMessage = { message: text, user: user.name };
     const updatedMessages = [...received, newMessage];
     socket.emit("message", updatedMessages);
     socket.emit("text", updatedMessages);
@@ -47,7 +49,7 @@ const Chat = ({ user }) => {
         sx={{ position: "relative", padding: "1.2rem" }}
         variant="outlined"
       >
-        {user}
+        {name}
       </AppBar>
 
       <div className="chatArea" style={{ height: "83vh" }}>
