@@ -11,9 +11,9 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
   const { user: currentUser } = useSelector((state) => state.user);
   const { connected_users } = useSelector((state) => state.connected_users);
 
-  const handleClick = (name, socketId) => {
+  const handleClick = (name, socketId, userId) => {
     console.log(name);
-    setSelectedUser({name, socketId});
+    setSelectedUser({name, socketId, userId});
   };
   const filteredUsers = connected_users.filter(
     (el) => el.name !== currentUser.name,
@@ -33,7 +33,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
               borderBottom={"1px solid rgb(43, 43, 43)"}
               padding={"1rem"}
               sx={{ cursor: "pointer" }}
-              onClick={() => handleClick(user.name, user.socketId)}
+              onClick={() => handleClick(user.name, user.socketId, user.userId)}
             >
               <AccountCircle />
               <Typography>{user.name}</Typography>

@@ -12,6 +12,7 @@ import SendIcon from "@mui/icons-material/Send";
 import { Hey_Server } from "../../main";
 import { useSelector, useDispatch } from "react-redux";
 import { connected_users } from "../../redux/slice/connectedUser";
+import "./chat.scss";
 
 const Chat = ({ selectedUser }) => {
   const socket = useMemo(() => io(Hey_Server), []);
@@ -23,14 +24,26 @@ const Chat = ({ selectedUser }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log(text)
-    const newMessage = { message: text, by: user.name, to:selectedUser?.name, targetSocketId: selectedUser?.socketId };
+    console.log(text);
+    const newMessage = {
+      message: text,
+      sender: user.name,
+      senderId: user._id,
+      receiver: selectedUser?.name,
+      receiverId: selectedUser?.userId,
+      targetSocketId: selectedUser?.socketId,
+    };
     const updatedMessages = [...received, newMessage];
-    socket.emit("text", updatedMessages);
     setReceived(updatedMessages);
+    socket.emit("text", updatedMessages);
     setText("");
   };
 
+  useEffect(() => {
+    setReceived([]);
+  }, [selectedUser]);
+  // const allMessages = [];
+  let newMessage;
   useEffect(() => {
     socket.on("connect", () => {
       socket.emit("welcome", {
@@ -44,15 +57,17 @@ const Chat = ({ selectedUser }) => {
       // console.log("connected users", data);
       dispatch(connected_users(data));
     });
-    console.log("before reciecedText")
+    console.log("before reciecedText");
     socket.on("received_text", (text) => {
       console.log("received text", text);
+
       setReceived(text);
     });
   }, []);
+  console.log(received, "all_messages");
 
   return (
-    <div className="chat" style={{ width: "83vw" }}>
+    <div className="chat" style={{ width: "72vw" }}>
       <AppBar
         sx={{ position: "relative", padding: "1.2rem" }}
         variant="outlined"
@@ -60,13 +75,19 @@ const Chat = ({ selectedUser }) => {
         {selectedUser?.name}
       </AppBar>
 
-      <div className="chatArea" style={{ height: "83vh" }}>
+      <div className="chatArea" style={{ height: "85vh" }}>
         {received &&
           received.map((message, index) => (
-            <Stack key={index}>
-              <Typography variant="h6" color={"darkgreen"}>
-                {message.by === user.name ? "You" : message.by}
-              </Typography>
+            <Stack
+              className={`message ${
+                message?.senderId === user._id ? "right" : "left"
+              }`}
+              key={index}
+              display={"inline-block"}
+            >
+              {/* <Typography variant="h6" className="userName">
+                {message?.senderId === user._id ? "You" : message?.sender}
+              </Typography> */}
               <Typography>{message.message}</Typography>
             </Stack>
           ))}

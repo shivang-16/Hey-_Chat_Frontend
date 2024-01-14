@@ -1,0 +1,60 @@
+
+// .right {
+//     border: 2px solid red;
+//     background-color: rgb(3, 106, 3);
+//     color: rgb(137, 134, 134);
+// }
+.chatArea {
+    // border: 2px solid red;
+    // width: 100vw;
+    // height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: black ;
+    z-index: -1;
+    &::before {
+      content: "";
+      position: absolute;
+      height: 100%;
+      width: 100%;
+  
+      background-image: url(https://e0.pxfuel.com/wallpapers/772/34/desktop-wallpaper-gradient-abstract-k-digital-art-logo-minimalism-minimalist-mocah.jpg);
+      background-size: contain;
+      z-index: -1;
+      opacity: 0.4;
+    }
+  }
+
+.userName {
+    color: rgb(116, 222, 3);
+    // padding: 5px 0px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.left {
+    align-self: flex-start;
+    background-color: rgb(76, 76, 76);
+    
+  }
+.chatArea{
+    display: flex;
+    flex-direction: column;
+}
+.message {
+    display: inline-block;
+    max-width: 50%;
+    border-radius: 20px;
+    padding: 5px 10px;
+    margin: 10px 0px;
+    font-size: 17px;
+    color: white;
+  }
+
+  .right {
+    align-self: flex-end;
+    background-color: green;
+  
+
+  }
