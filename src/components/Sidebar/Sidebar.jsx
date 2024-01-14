@@ -6,14 +6,14 @@ import { Stack, Typography } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useSelector } from "react-redux";
 
-const Sidebar = ({ user, setUser }) => {
+const Sidebar = ({ selectedUser, setSelectedUser }) => {
   const { allUsers } = useSelector((state) => state.allUsers);
   const { user: currentUser } = useSelector((state) => state.user);
   const { connected_users } = useSelector((state) => state.connected_users);
 
-  const handleClick = (name) => {
+  const handleClick = (name, socketId) => {
     console.log(name);
-    setUser(name);
+    setSelectedUser({name, socketId});
   };
   const filteredUsers = connected_users.filter(
     (el) => el.name !== currentUser.name,
@@ -26,17 +26,17 @@ const Sidebar = ({ user, setUser }) => {
           <Appbar />
         </div>
         {connected_users &&
-          filteredUsers.map((data) => (
+          filteredUsers.map((user) => (
             <Stack
               direction={"row"}
               spacing={"2rem"}
               borderBottom={"1px solid rgb(43, 43, 43)"}
               padding={"1rem"}
               sx={{ cursor: "pointer" }}
-              onClick={() => handleClick(data.name)}
+              onClick={() => handleClick(user.name, user.socketId)}
             >
               <AccountCircle />
-              <Typography>{data.name}</Typography>
+              <Typography>{user.name}</Typography>
             </Stack>
           ))}
 

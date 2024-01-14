@@ -4,15 +4,15 @@ import Sidebar from "../Sidebar/Sidebar";
 import "./home.scss";
 
 const Home = () => {
-  const [user, setUser] = useState("");
+  const [selectedUser, setSelectedUser] = useState();
 
   return (
     <div style={{ display: "flex" }}>
       <div>
-        <Sidebar user={user} setUser={setUser} />
+        <Sidebar selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
       </div>
       <div>
-        <Chat name={user} />
+        <Chat selectedUser={selectedUser} />
       </div>
     </div>
   );

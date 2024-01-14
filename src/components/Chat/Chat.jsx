@@ -13,7 +13,7 @@ import { Hey_Server } from "../../main";
 import { useSelector, useDispatch } from "react-redux";
 import { connected_users } from "../../redux/slice/connectedUser";
 
-const Chat = ({ name }) => {
+const Chat = ({ selectedUser }) => {
   const socket = useMemo(() => io(Hey_Server), []);
   const [text, setText] = useState("");
   const [received, setReceived] = useState([]);
@@ -24,7 +24,7 @@ const Chat = ({ name }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // console.log(text)
-    const newMessage = { message: text, user: user.name };
+    const newMessage = { message: text, by: user.name, to:selectedUser?.name, targetSocketId: selectedUser?.socketId };
     const updatedMessages = [...received, newMessage];
     socket.emit("text", updatedMessages);
     setReceived(updatedMessages);
@@ -41,11 +41,12 @@ const Chat = ({ name }) => {
     });
 
     socket.on("connected_users", (data) => {
-      console.log("connected users", data);
+      // console.log("connected users", data);
       dispatch(connected_users(data));
     });
+    console.log("before reciecedText")
     socket.on("received_text", (text) => {
-      console.log(text);
+      console.log("received text", text);
       setReceived(text);
     });
   }, []);
@@ -56,15 +57,15 @@ const Chat = ({ name }) => {
         sx={{ position: "relative", padding: "1.2rem" }}
         variant="outlined"
       >
-        {name}
+        {selectedUser?.name}
       </AppBar>
 
       <div className="chatArea" style={{ height: "83vh" }}>
         {received &&
-          received.map((message) => (
-            <Stack>
+          received.map((message, index) => (
+            <Stack key={index}>
               <Typography variant="h6" color={"darkgreen"}>
-                {message.user === user.name ? "You" : message.user}
+                {message.by === user.name ? "You" : message.by}
               </Typography>
               <Typography>{message.message}</Typography>
             </Stack>
