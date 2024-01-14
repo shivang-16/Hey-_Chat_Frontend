@@ -13,6 +13,9 @@ import { Hey_Server } from "../../main";
 import { useSelector, useDispatch } from "react-redux";
 import { connected_users } from "../../redux/slice/connectedUser";
 import "./chat.scss";
+import { getChat } from "../../redux/actions/chatActions";
+import SaveIcon from "@mui/icons-material/Save";
+import { v4 as uuidv4 } from "uuid";
 
 const Chat = ({ selectedUser }) => {
   const socket = useMemo(() => io(Hey_Server), []);
@@ -27,6 +30,7 @@ const Chat = ({ selectedUser }) => {
     console.log(text);
     const newMessage = {
       message: text,
+      messageId: uuidv4(),
       sender: user.name,
       senderId: user._id,
       receiver: selectedUser?.name,
@@ -36,6 +40,8 @@ const Chat = ({ selectedUser }) => {
     const updatedMessages = [...received, newMessage];
     setReceived(updatedMessages);
     socket.emit("text", updatedMessages);
+
+    dispatch(getChat(updatedMessages));
     setText("");
   };
 
@@ -65,6 +71,8 @@ const Chat = ({ selectedUser }) => {
     });
   }, []);
   console.log(received, "all_messages");
+
+  const handleSave = () => {};
 
   return (
     <div className="chat" style={{ width: "72vw" }}>
@@ -99,6 +107,17 @@ const Chat = ({ selectedUser }) => {
           placeholder="Enter Message"
           onChange={(e) => setText(e.target.value)}
         />
+        <Button
+          onClick={handleSave}
+          sx={{
+            position: "absolute",
+            right: "70px",
+            margin: "1rem",
+            cursor: "pointer",
+          }}
+        >
+          <SaveIcon />
+        </Button>
         <Button
           type="submit"
           sx={{

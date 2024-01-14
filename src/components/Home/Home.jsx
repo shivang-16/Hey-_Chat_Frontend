@@ -9,7 +9,10 @@ const Home = () => {
   return (
     <div style={{ display: "flex" }}>
       <div>
-        <Sidebar selectedUser={selectedUser} setSelectedUser={setSelectedUser} />
+        <Sidebar
+          selectedUser={selectedUser}
+          setSelectedUser={setSelectedUser}
+        />
       </div>
       <div>
         <Chat selectedUser={selectedUser} />

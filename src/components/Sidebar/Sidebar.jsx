@@ -13,7 +13,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
 
   const handleClick = (name, socketId, userId) => {
     console.log(name);
-    setSelectedUser({name, socketId, userId});
+    setSelectedUser({ name, socketId, userId });
   };
   const filteredUsers = connected_users.filter(
     (el) => el.name !== currentUser.name,
