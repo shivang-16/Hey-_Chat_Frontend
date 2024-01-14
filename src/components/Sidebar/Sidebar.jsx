@@ -4,13 +4,20 @@ import "./sidebar.scss";
 import Appbar from "./Appbar";
 import { Stack, Typography } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ user, setUser }) => {
-  user = ["Lucky", "Tanya", "Mummy"];
+  const { allUsers } = useSelector((state) => state.allUsers);
+  const { user: currentUser } = useSelector((state) => state.user);
+  const { connected_users } = useSelector((state) => state.connected_users);
+
   const handleClick = (name) => {
     console.log(name);
     setUser(name);
   };
+  const filteredUsers = connected_users.filter(
+    (el) => el.name !== currentUser.name,
+  );
 
   return (
     <React.Fragment>
@@ -18,18 +25,18 @@ const Sidebar = ({ user, setUser }) => {
         <div className="appbar">
           <Appbar />
         </div>
-        {user &&
-          user.map((name) => (
+        {connected_users &&
+          filteredUsers.map((data) => (
             <Stack
               direction={"row"}
               spacing={"2rem"}
               borderBottom={"1px solid rgb(43, 43, 43)"}
               padding={"1rem"}
               sx={{ cursor: "pointer" }}
-              onClick={() => handleClick(name)}
+              onClick={() => handleClick(data.name)}
             >
               <AccountCircle />
-              <Typography>{name}</Typography>
+              <Typography>{data.name}</Typography>
             </Stack>
           ))}
 

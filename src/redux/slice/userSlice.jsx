@@ -79,6 +79,24 @@ export const userSlice = createSlice({
   },
 });
 
+export const allUsersSlice = createSlice({
+  name: "allUsers",
+  initialState: { loading: false, allUsers: [] },
+  reducers: {
+    AllUserRequest: (state) => {
+      state.loading = true;
+    },
+    AllUserSuccess: (state, action) => {
+      state.loading = false;
+      state.allUsers = action.payload;
+    },
+    AllUserFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+  },
+});
+
 export const {
   OtpRequests,
   OtpSuccess,
@@ -96,4 +114,8 @@ export const {
   LogoutSuccess,
   LogoutFail,
 } = userSlice.actions;
+
+export const { AllUserRequest, AllUserSuccess, AllUserFail } =
+  allUsersSlice.actions;
+
 export default userSlice.reducer;

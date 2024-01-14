@@ -10,19 +10,22 @@ import React, { useMemo, useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import SendIcon from "@mui/icons-material/Send";
 import { Hey_Server } from "../../main";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { connected_users } from "../../redux/slice/connectedUser";
 
 const Chat = ({ name }) => {
   const socket = useMemo(() => io(Hey_Server), []);
   const [text, setText] = useState("");
   const [received, setReceived] = useState([]);
   const { isAuthenticated, user } = useSelector((state) => state.user);
+
+  const dispatch = useDispatch();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // console.log(text)
     const newMessage = { message: text, user: user.name };
     const updatedMessages = [...received, newMessage];
-    socket.emit("message", updatedMessages);
     socket.emit("text", updatedMessages);
     setReceived(updatedMessages);
     setText("");
@@ -30,13 +33,17 @@ const Chat = ({ name }) => {
 
   useEffect(() => {
     socket.on("connect", () => {
-      console.log(socket.id);
+      socket.emit("welcome", {
+        name: user.name,
+        userId: user._id,
+        socketId: socket.id,
+      });
     });
 
-    socket.on("welcome", (data) => {
-      console.log(data);
+    socket.on("connected_users", (data) => {
+      console.log("connected users", data);
+      dispatch(connected_users(data));
     });
-
     socket.on("received_text", (text) => {
       console.log(text);
       setReceived(text);
@@ -57,7 +64,7 @@ const Chat = ({ name }) => {
           received.map((message) => (
             <Stack>
               <Typography variant="h6" color={"darkgreen"}>
-                {message.user}
+                {message.user === user.name ? "You" : message.user}
               </Typography>
               <Typography>{message.message}</Typography>
             </Stack>

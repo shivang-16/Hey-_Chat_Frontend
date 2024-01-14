@@ -2,12 +2,18 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { Hey_Server } from "../../main";
 import {
+  AllUserFail,
+  AllUserRequest,
+  AllUserSuccess,
   LoadUserFail,
   LoadUserRequests,
   LoadUserSuccess,
   LoginFail,
   LoginRequests,
   LoginSuccess,
+  LogoutFail,
+  LogoutRequests,
+  LogoutSuccess,
 } from "../slice/userSlice";
 
 export const resgister = (name, email, password) => async (dispatch) => {
@@ -137,15 +143,32 @@ export const loadUser = () => async (dispatch) => {
 
 export const logout = () => async (dispatch) => {
   try {
-    dispatch({ type: "LogoutRequests" });
+    dispatch(LogoutRequests());
     const { data } = await axios.get(`${Hey_Server}/api/user/logout`, {
       withCredentials: true,
     });
 
     console.log(data);
-    dispatch({ type: "LogoutSuccess", payload: data.message });
+    dispatch(LogoutSuccess(data.message));
+    toast.success(data.message);
   } catch (error) {
     console.log(error);
-    dispatch({ type: "LogoutFail", payload: error.response.data.message });
+    dispatch(LogoutFail(error.response.data.message));
+    toast.error(error.response.data.message);
+  }
+};
+
+export const getAllUsers = () => async (dispatch) => {
+  try {
+    dispatch(AllUserRequest());
+    const { data } = await axios.get(`${Hey_Server}/api/user/all`, {
+      withCredentials: true,
+    });
+
+    console.log(data);
+    dispatch(AllUserSuccess(data.allUsers));
+  } catch (error) {
+    console.log(error);
+    dispatch(AllUserFail(error.response.data.message));
   }
 };

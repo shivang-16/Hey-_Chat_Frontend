@@ -6,13 +6,14 @@ import Home from "./components/Home/Home";
 import { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { loadUser } from "./redux/actions/userActions";
+import { getAllUsers, loadUser } from "./redux/actions/userActions";
 
 function App() {
   const { isAuthenticated } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(loadUser());
+    dispatch(getAllUsers());
   }, [dispatch]);
   return (
     <Router>
