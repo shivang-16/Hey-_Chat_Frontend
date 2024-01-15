@@ -22,6 +22,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <CssBaseline />
       <App />
     </ThemeProvider>
-    ,
-  </Provider>,
+  </Provider>
 );

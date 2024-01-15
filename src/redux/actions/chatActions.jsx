@@ -5,7 +5,7 @@ import { getChatFail, getChatRequest, getChatSuccess } from "../slice/chat";
 export const getChat = (chatPayload) => async (dispatch) => {
   try {
     console.log(chatPayload);
-    dispatch(getChatRequest());
+    // dispatch(getChatRequest());
     const { data } = await axios.post(
       `${Hey_Server}/api/chat/save`,
       {
@@ -18,9 +18,28 @@ export const getChat = (chatPayload) => async (dispatch) => {
         withCredentials: true,
       },
     );
-    dispatch(getChatSuccess(data.result));
+    // dispatch(getChatSuccess(data.result));
   } catch (error) {
     console.log(error);
-    dispatch(getChatFail(error.response.data.message));
+    // dispatch(getChatFail(error.response.data.message));
   }
 };
+
+export const getChatBySenderAndReceiver = ({senderId, receiverId}) => async(dispatch) => {
+  try {
+    console.log(senderId, receiverId)
+     dispatch(getChatRequest())
+    const {data} = await axios.post(`${Hey_Server}/api/chat/get`, {
+      senderId, receiverId
+    },{
+      headers:{
+        "Content-Type": "application/json"
+      },
+      withCredentials: true
+    } )
+    dispatch(getChatSuccess(data.chat))
+  } catch (error) {
+    console.log(error)
+    dispatch(getChatFail(error.response.data.message));
+  }
+}

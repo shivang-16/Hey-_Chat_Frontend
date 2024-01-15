@@ -21,7 +21,9 @@ const Chat = ({ selectedUser }) => {
   const socket = useMemo(() => io(Hey_Server), []);
   const [text, setText] = useState("");
   const [received, setReceived] = useState([]);
-  const { isAuthenticated, user } = useSelector((state) => state.user);
+  const [allMessages, setAllMessages] = useState([]);
+    const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { chat } = useSelector((state) => state.chat)
 
   const dispatch = useDispatch();
 
@@ -42,6 +44,7 @@ const Chat = ({ selectedUser }) => {
     socket.emit("text", updatedMessages);
 
     dispatch(getChat(updatedMessages));
+
     setText("");
   };
 
@@ -71,19 +74,28 @@ const Chat = ({ selectedUser }) => {
     });
   }, []);
   console.log(received, "all_messages");
+  
+  // useEffect(() => {
+  //   setAllMessages(received); // Update allMessages when chat messages change
+  // }, [chat]);
+
+
+
+  console.log("mapped chat", allMessages)
 
   const handleSave = () => {};
 
   return (
-    <div className="chat" style={{ width: "72vw" }}>
+    <div className="chat" style={{ width: "80vw"}}>
+      
       <AppBar
         sx={{ position: "relative", padding: "1.2rem" }}
         variant="outlined"
       >
-        {selectedUser?.name}
+        {selectedUser?.name || "Hello "}
       </AppBar>
 
-      <div className="chatArea" style={{ height: "85vh" }}>
+      <div className="chatArea " >
         {received &&
           received.map((message, index) => (
             <Stack
@@ -96,7 +108,7 @@ const Chat = ({ selectedUser }) => {
               {/* <Typography variant="h6" className="userName">
                 {message?.senderId === user._id ? "You" : message?.sender}
               </Typography> */}
-              <Typography>{message.message}</Typography>
+              <Typography>{message?.message}</Typography>
             </Stack>
           ))}
       </div>
@@ -105,6 +117,7 @@ const Chat = ({ selectedUser }) => {
           variant="filled"
           fullWidth
           placeholder="Enter Message"
+          value={text}
           onChange={(e) => setText(e.target.value)}
         />
         <Button

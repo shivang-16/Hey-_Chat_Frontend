@@ -4,16 +4,20 @@ import "./sidebar.scss";
 import Appbar from "./Appbar";
 import { Stack, Typography } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import {  getChatBySenderAndReceiver } from "../../redux/actions/chatActions";
 
 const Sidebar = ({ selectedUser, setSelectedUser }) => {
   const { allUsers } = useSelector((state) => state.allUsers);
   const { user: currentUser } = useSelector((state) => state.user);
   const { connected_users } = useSelector((state) => state.connected_users);
 
+  const dispatch = useDispatch()
+
   const handleClick = (name, socketId, userId) => {
     console.log(name);
     setSelectedUser({ name, socketId, userId });
+    dispatch(getChatBySenderAndReceiver({senderId: currentUser._id, receiverId: userId}))
   };
   const filteredUsers = connected_users.filter(
     (el) => el.name !== currentUser.name,

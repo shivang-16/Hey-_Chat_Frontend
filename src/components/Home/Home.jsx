@@ -7,18 +7,18 @@ const Home = () => {
   const [selectedUser, setSelectedUser] = useState();
 
   return (
-    <div style={{ display: "flex" }}>
-      <div>
+    <div className="home">
+      <div className="homebox">
         <Sidebar
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
         />
       </div>
-      <div>
+      <div className="homebox">
         <Chat selectedUser={selectedUser} />
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default Home;
