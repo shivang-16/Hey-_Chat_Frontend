@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllUsers, loadUser } from "./redux/actions/userActions";
+import Groups from "./components/Groups/Groups";
 
 function App() {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -24,7 +25,7 @@ function App() {
           element={isAuthenticated ? <Home /> : <Login />}
         />
         <Route exact path="/signup" element={<SignUp />} />
-        {/* <Route exact path="/login" element={} /> */}
+        <Route exact path="/groups" element={<Groups/>} />
       </Routes>
       <Toaster />
     </Router>
