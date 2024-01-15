@@ -1,14 +1,12 @@
 import toast from "react-hot-toast";
 import { Hey_Server } from "../../main";
-import { addGroupRequest, addGroupSuccess } from "../slice/group";
+import {  getAllGroupsFail, getAllGroupsRequest, getAllGroupsSuccess, getGroupFail, getGroupRequest, getGroupSuccess } from "../slice/group";
 import axios from 'axios'
 
-export const getGroups = (groupName, messages) => async(dispatch) => {
+export const addGroups = (groupName) => async(dispatch) => {
     try {
-        // console.log(groupName, messages)
-        dispatch(addGroupRequest())
         const {data} = await axios.post(`${Hey_Server}/api/group/add`, {
-            groupName, messages
+            groupName
           },{
             headers:{
               "Content-Type": "application/json"
@@ -16,10 +14,58 @@ export const getGroups = (groupName, messages) => async(dispatch) => {
             withCredentials: true
           })
           console.log(data)
-        dispatch(addGroupSuccess(data.groups))
+        toast.success(`${data.group.groupName} created`)
 
     } catch (error) {
         console.log(error)
         toast.error(error.response.data.message)
     }
 }
+
+export const getMyGroups = () => async(dispatch) => {
+    try {
+        dispatch(getGroupRequest())
+        const {data} = await axios.get(`${Hey_Server}/api/group/mygroups`, {
+            withCredentials: true
+        })
+        dispatch(getGroupSuccess(data.group))
+    } catch (error) {
+        console.log(error)
+        dispatch(getGroupFail(error.response.data.message))
+    }
+}
+
+export const getAllGroups = () => async(dispatch) => {
+    try {
+        dispatch(getAllGroupsRequest())
+        const {data} = await axios.get(`${Hey_Server}/api/group/get`, {
+            withCredentials: true
+        })
+        dispatch(getAllGroupsSuccess(data.allGroups))
+
+    } catch (error) {
+        console.log(error)
+        dispatch(getAllGroupsFail(error.response.data.message))
+        
+    }
+}
+
+export const joinGroup = (groupId) => async(dispatch) => {
+    try {
+        
+        const {data} = await axios.post(`${Hey_Server}/api/group/join?groupId=${groupId}`, 
+        {
+            headers:{
+              "Content-Type": "application/json"
+            },
+            withCredentials: true
+          })
+          console.log(data)
+        toast.success(`${data.message} created`)
+
+    } catch (error) {
+        console.log(error)
+        toast.error(error.response.data.message || "Error Creating Group")
+    }
+}
+

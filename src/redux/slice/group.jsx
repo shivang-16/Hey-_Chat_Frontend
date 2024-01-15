@@ -9,19 +9,38 @@ const groupSlice = createSlice({
     name:"Group",
     initialState,
     reducers:{
-        addGroupRequest: (state) => {
-          state.loading = true
+        getGroupRequest: (state) => {
+            state.loading= true;
         },
-        addGroupSuccess: (state, action) => {
-          state.loading = false;
-          state.groups = action.payload
+        getGroupSuccess: (state, action) => {
+            state.loading = false;
+            state.groups = action.payload
         },
-        addGroupFail: (state, action) =>{
+        getGroupFail: (state, action) => {
             state.loading = false;
             state.error = action.payload
         }
     }
 })
 
-export const { addGroupRequest, addGroupSuccess, addGroupFail } = groupSlice.actions
+export const allGroupSlice = createSlice({
+    name: "All Groups",
+    initialState: {loading: false, allGroups: []},
+    reducers: {
+        getAllGroupsRequest: (state) => {
+            state.loading = true;
+        },
+        getAllGroupsSuccess: (state, action) => {
+            state.loading = false;
+            state.allGroups = action.payload
+        },
+        getAllGroupsFail: (state, action) => {
+            state.loading = false;
+            state.error = action.payload
+        }
+    }
+})
+
+export const { getGroupFail, getGroupRequest, getGroupSuccess } = groupSlice.actions
+export const { getAllGroupsFail, getAllGroupsRequest, getAllGroupsSuccess } = allGroupSlice.actions
 export default groupSlice.reducer

@@ -7,8 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { TextField } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { addGroupRequest } from '../../redux/slice/group';
-import { getGroups } from '../../redux/actions/groupActions';
+import { addGroups, getAllGroups, getMyGroups } from '../../redux/actions/groupActions';
 
 
 const style = {
@@ -27,12 +26,11 @@ export default function ModalBox({open, setOpen}) {
 //   const [open, setOpen] = React.useState(false);
 //   const handleOpen = () => setOpen(true);
 const [groupName, setGroupName] = useState()
-const [messages, setMessages] = useState([])
 const {user} = useSelector(state => state.user)
 const dispatch = useDispatch()
   const handleClose = () => setOpen(false);
   
-  const handleCreate = (e) => {
+  const handleCreate = async(e) => {
     e.preventDefault()
     const groupInfo = {
         groupName: groupName,
@@ -40,7 +38,10 @@ const dispatch = useDispatch()
         creatorId: user._id
     }
 
-    dispatch(getGroups(groupName, messages))
+    await dispatch(addGroups(groupName))
+    dispatch(getMyGroups())
+    dispatch(getAllGroups())
+
     setOpen(false)
   }
 

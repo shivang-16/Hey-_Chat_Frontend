@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getAllUsers, loadUser } from "./redux/actions/userActions";
 import Groups from "./components/Groups/Groups";
+import { getAllGroups, getMyGroups } from "./redux/actions/groupActions";
 
 function App() {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -15,6 +16,8 @@ function App() {
   useEffect(() => {
     dispatch(loadUser());
     dispatch(getAllUsers());
+    dispatch(getMyGroups());
+    dispatch(getAllGroups());
   }, [dispatch]);
   return (
     <Router>
