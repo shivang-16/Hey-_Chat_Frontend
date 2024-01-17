@@ -13,16 +13,23 @@ import { Hey_Server } from "../../main";
 import { useSelector, useDispatch } from "react-redux";
 import { connected_users } from "../../redux/slice/connectedUser";
 import "./chat.scss";
-import { getChat } from "../../redux/actions/chatActions";
+import { saveChat } from "../../redux/actions/chatActions";
 import SaveIcon from "@mui/icons-material/Save";
 import { v4 as uuidv4 } from "uuid";
+import ModalBox from "../ModelBox/ModelBox";
+import { joinGroup } from "../../redux/actions/groupActions";
+import { socket } from "../../main";
 
-const Chat = ({ selectedUser }) => {
+const Chat = ({ selectedUser, selectedGroup }) => {
+
+  console.log(selectedUser, selectedGroup)
   const socket = useMemo(() => io(Hey_Server), []);
   const [text, setText] = useState("");
   const [received, setReceived] = useState([]);
   const [allMessages, setAllMessages] = useState([]);
-    const { isAuthenticated, user } = useSelector((state) => state.user);
+  const [open, setOpen] = useState(false)
+    
+  const { isAuthenticated, user } = useSelector((state) => state.user);
   const { chat } = useSelector((state) => state.chat)
 
   const dispatch = useDispatch();
@@ -30,20 +37,41 @@ const Chat = ({ selectedUser }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(text);
-    const newMessage = {
-      message: text,
-      messageId: uuidv4(),
-      sender: user.name,
-      senderId: user._id,
-      receiver: selectedUser?.name,
-      receiverId: selectedUser?.userId,
-      targetSocketId: selectedUser?.socketId,
-    };
-    const updatedMessages = [...received, newMessage];
-    setReceived(updatedMessages);
-    socket.emit("text", updatedMessages);
 
-    dispatch(getChat(updatedMessages));
+    if(selectedUser) {
+      const newMessage = {
+        message: text,
+        messageId: uuidv4(),
+        sender: user.name,
+        senderId: user._id,
+        receiver: selectedUser?.name,
+        receiverId: selectedUser?.userId,
+        targetSocketId: selectedUser?.socketId,
+      };
+      const updatedMessages = [...received, newMessage];
+      setReceived(updatedMessages);
+      socket.emit("text", updatedMessages);
+      dispatch(saveChat(updatedMessages));
+    }
+
+    if(selectedGroup) {
+      console.log(selectedGroup)
+      const groupInfo = {
+        groupName: selectedGroup?.groupName,
+        message: text,
+        sender: user.name
+      }
+
+      const updatedInfo = [...received, groupInfo];
+      console.log(updatedInfo)
+      setReceived(updatedInfo);
+      
+      socket.emit("group_text", updatedInfo)
+  
+    }
+
+
+  
 
     setText("");
   };
@@ -72,6 +100,10 @@ const Chat = ({ selectedUser }) => {
 
       setReceived(text);
     });
+
+    socket.on("welcomce_group", (data) => {
+      console.log("WElcome", data)
+    })
   }, []);
   console.log(received, "all_messages");
   
@@ -79,12 +111,21 @@ const Chat = ({ selectedUser }) => {
   //   setAllMessages(received); // Update allMessages when chat messages change
   // }, [chat]);
 
+  const isMember = useMemo(() => {
+    console.log(selectedGroup, "INSIDE GROUPS")
+    return selectedGroup?.members.some(memberId => memberId === user._id);
+  }, [selectedGroup, user._id]);
+  console.log(isMember)
 
 
   console.log("mapped chat", allMessages)
+  console.log("group", selectedGroup?.groupId)
 
   const handleSave = () => {};
 
+  const handleJoin = (groupId) => {
+    dispatch(joinGroup(groupId))
+  }
   return (
     <div className="chat" style={{ width: "80vw"}}>
       
@@ -92,7 +133,7 @@ const Chat = ({ selectedUser }) => {
         sx={{ position: "relative", padding: "1.2rem" }}
         variant="outlined"
       >
-        {selectedUser?.name || "Hello "}
+        {selectedUser?.name || selectedGroup?.groupName || "Hello "}
       </AppBar>
 
       <div className="chatArea " >
@@ -112,7 +153,7 @@ const Chat = ({ selectedUser }) => {
             </Stack>
           ))}
       </div>
-      <form style={{ display: "flex" }} onSubmit={handleSubmit}>
+      { selectedUser || isMember ?  <form style={{ display: "flex" }} onSubmit={handleSubmit}>
         <TextField
           variant="filled"
           fullWidth
@@ -142,7 +183,16 @@ const Chat = ({ selectedUser }) => {
         >
           <SendIcon />
         </Button>
-      </form>
+      </form> : ""}
+      
+      {
+        selectedGroup && !isMember ? ( 
+        <Stack>
+          <Button onClick={()=>handleJoin(selectedGroup?.groupId)}>Click here to Join Group</Button>
+        </Stack>
+        ) : ""
+      }
+      {/* <ModalBox open={open} setOpen={setOpen} title="Join this grouop to see conversation" button="Join" /> */}
     </div>
   );
 };

@@ -51,9 +51,10 @@ export const getAllGroups = () => async(dispatch) => {
 }
 
 export const joinGroup = (groupId) => async(dispatch) => {
+    console.log(groupId)
     try {
         
-        const {data} = await axios.post(`${Hey_Server}/api/group/join?groupId=${groupId}`, 
+        const {data} = await axios.patch(`${Hey_Server}/api/group/join`, {groupId}, 
         {
             headers:{
               "Content-Type": "application/json"
@@ -65,7 +66,7 @@ export const joinGroup = (groupId) => async(dispatch) => {
 
     } catch (error) {
         console.log(error)
-        toast.error(error.response.data.message || "Error Creating Group")
+        toast.error(error.response.data.message || "Error Joining Group")
     }
 }
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import { Hey_Server } from "../../main";
 import { getChatFail, getChatRequest, getChatSuccess } from "../slice/chat";
 
-export const getChat = (chatPayload) => async (dispatch) => {
+export const saveChat = (chatPayload) => async (dispatch) => {
   try {
     console.log(chatPayload);
     // dispatch(getChatRequest());

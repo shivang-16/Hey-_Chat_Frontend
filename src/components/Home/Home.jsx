@@ -5,6 +5,8 @@ import "./home.scss";
 
 const Home = () => {
   const [selectedUser, setSelectedUser] = useState();
+  const [selectedGroup, setSelectedGroup] = useState()
+  // console.log("group", selectedGroup)
 
   return (
     <div className="home">
@@ -12,10 +14,12 @@ const Home = () => {
         <Sidebar
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
+          selectedGroup={selectedGroup}
+          setSelectedGroup={setSelectedGroup}
         />
       </div>
       <div className="homebox">
-        <Chat selectedUser={selectedUser} />
+        <Chat selectedUser={selectedUser} selectedGroup={selectedGroup}/>
       </div>
     </div>
   )

@@ -10,9 +10,11 @@ import { useSelector, useDispatch } from "react-redux";
 import {  getChatBySenderAndReceiver } from "../../redux/actions/chatActions";
 import { useNavigate } from "react-router-dom";
 import ModalBox from "../ModelBox/ModelBox";
+import { addGroups, getAllGroups } from "../../redux/actions/groupActions";
+import { socket } from "../../main";
 
 
-const Sidebar = ({ selectedUser, setSelectedUser }) => {
+const Sidebar = ({ selectedUser, setSelectedUser, selectedGroup, setSelectedGroup }) => {
   const { allUsers } = useSelector((state) => state.allUsers);
   const { user: currentUser } = useSelector((state) => state.user);
   const { connected_users } = useSelector((state) => state.connected_users);
@@ -20,11 +22,14 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
   const { groups } = useSelector((state) => state.groups)
   const [open, setOpen] = useState(false)
 
+  const [groupName, setGroupName] = useState('')
+
   const dispatch = useDispatch()
 
   const handleClickUser = (name, socketId, userId) => {
     console.log(name);
     setSelectedUser({ name, socketId, userId });
+    setSelectedGroup(undefined)
     dispatch(getChatBySenderAndReceiver({senderId: currentUser._id, receiverId: userId}))
   };
   const filteredUsers = connected_users.filter(
@@ -36,9 +41,27 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
      setOpen(true)
    }
 
-   const handleJoinGroup = () => {
-      
+   const handleClickGroup = (groupName, groupId, members) => {
+      console.log("hello")
+      socket.emit("join_room", groupName)
+      setSelectedGroup({groupName, groupId, members})
+      setSelectedUser(undefined)
    }
+
+  //  console.log(selectedGroup,"group in sidebar")
+  //  console.log(selectedUser)
+  //  console.log(groupName)
+   const handleCreate = async(e) => {
+    e.preventDefault()
+    console.log("inside", groupName)
+
+    await dispatch(addGroups(groupName))
+    dispatch(getMyGroups())
+    dispatch(getAllGroups())
+
+    setOpen(false)
+    // setSelectedUser(groupName)
+  }
    
   return (
     <React.Fragment>
@@ -59,7 +82,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
           </AccordionSummary>
          { allGroups && allGroups.map((group) => (
           <AccordionDetails>
-             <Button sx={{color: "white"}} onClick={handleJoinGroup}>{group.groupName}</Button>  
+             <Button sx={{color: "white"}} onClick={() => handleClickGroup(group.groupName, group._id, group.members)}>{group.groupName}</Button>  
          </AccordionDetails>
          ))}
         </Accordion>
@@ -74,7 +97,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
           </AccordionSummary>
           { groups && groups?.map((group) => (
           <AccordionDetails>
-             <Button sx={{color: "white"}} onClick={handleBrowseGroup}>{group.groupName}</Button>  
+             <Button sx={{color: "white"}} onClick={() => handleClickGroup(group.groupName, group._id, group.members)}>{group.groupName}</Button>  
          </AccordionDetails>
          ))}
           </Accordion>
@@ -87,7 +110,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
           >
             Live Users
           </AccordionSummary>
-          {connected_users &&
+        {connected_users &&
           filteredUsers.map((user) => (
             <Stack
               direction={"row"}
@@ -124,7 +147,7 @@ const Sidebar = ({ selectedUser, setSelectedUser }) => {
         <Stack>hello</Stack>
         <Stack>hello</Stack> */}
       </div>
-      <ModalBox open={open} setOpen={setOpen}/>
+      <ModalBox open={open} setOpen={setOpen} title="Create Groups with Hey! Chat" button="Create" groupName={groupName} setGroupName={setGroupName} submitFunction={handleCreate} />
     </React.Fragment>
   );
 };

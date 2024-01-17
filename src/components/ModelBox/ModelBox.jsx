@@ -22,28 +22,10 @@ const style = {
   p: 4,
 };
 
-export default function ModalBox({open, setOpen}) {
-//   const [open, setOpen] = React.useState(false);
-//   const handleOpen = () => setOpen(true);
-const [groupName, setGroupName] = useState()
-const {user} = useSelector(state => state.user)
-const dispatch = useDispatch()
+export default function ModalBox({open, setOpen, title, button, groupName, setGroupName, submitFunction}) {
   const handleClose = () => setOpen(false);
   
-  const handleCreate = async(e) => {
-    e.preventDefault()
-    const groupInfo = {
-        groupName: groupName,
-        creatorName: user.name,
-        creatorId: user._id
-    }
-
-    await dispatch(addGroups(groupName))
-    dispatch(getMyGroups())
-    dispatch(getAllGroups())
-
-    setOpen(false)
-  }
+//  console.log(groupName,"model")
 
   return (
     <div>
@@ -64,11 +46,11 @@ const dispatch = useDispatch()
         <Fade in={open}>
           <Box sx={style}>
             <Typography id="transition-modal-title" variant="h6" component="h2">
-              Create Groups with Hey! Chat
+            {title}
             </Typography>
-            <form style={{display: 'flex', flexDirection:'column'}} onSubmit={handleCreate}>
+            <form style={{display: 'flex', flexDirection:'column'}} onSubmit={submitFunction}>
             <TextField placeholder='Enter group name' value={groupName} onChange={e => setGroupName(e.target.value)}/>
-            <Button type='submit'>Create</Button>
+            <Button type='submit'>{button}</Button>
             </form>
           </Box>
         </Fade>

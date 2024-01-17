@@ -11,6 +11,7 @@ import Groups from "./components/Groups/Groups";
 import { getAllGroups, getMyGroups } from "./redux/actions/groupActions";
 
 function App() {
+  
   const { isAuthenticated } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   useEffect(() => {
